@@ -8,7 +8,6 @@
   <meta name="color-scheme" content="dark light" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%2360a5fa'/%3E%3Ctext x='50' y='60' font-size='52' text-anchor='middle' fill='white' font-family='Arial'%3EY%3C/text%3E%3C/svg%3E">
   <style>
     /* ===== Design Tokens ===== */
@@ -29,16 +28,28 @@
       --bg:#ffffff; --surface:#f8fafc; --text:#0f172a; --muted:#475569; --brand:#2563eb; --brand-2:#7c3aed; --ring:rgba(37,99,235,.25); --border:#e2e8f0; --chip:#eef2ff; --shadow: 0 10px 20px rgba(15,23,42,.08);
     }
 
-    body, h1, h2, h3, h4, h5, h6, .btn, .pill, .menu a, .title{
-  font-family: Georgia,"Times New Roman",Times,serif;
-  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
-}
-
 
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
-    body{margin:0;background:var(--bg);color:var(--text);font:15.5px/1.65 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial}
+   body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Georgia", serif;
+  font-size: 15.5px;
+  line-height: 1.65;
+}
+
     a{color:inherit}
+
+    h1, h2, h3, h4, h5, h6 {
+  font-family: "Georgia", serif;
+}
+
+.btn, .menu a, .pill, .muted {
+  font-family: "Georgia", serif;
+}
+
 
     /* ===== Utilities ===== */
     .container{max-width:1120px;margin:auto;padding:0 20px}
