@@ -3,20 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Personal Portfolio</title>
+  <title>Your Name — Portfolio</title>
+  <meta name="description" content="Personal research portfolio: software security, ML/DL/LLMs for code, program analysis, and projects." />
+  <meta name="color-scheme" content="dark light" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%2360a5fa'/%3E%3Ctext x='50' y='60' font-size='52' text-anchor='middle' fill='white' font-family='Arial'%3EY%3C/text%3E%3C/svg%3E">
   <style>
     /* ===== Design Tokens ===== */
     :root{
-      --bg: #0b1220;         /* background */
-      --surface: #0f172a;    /* cards */
-      --text: #e5e7eb;       /* primary text */
-      --muted: #94a3b8;      /* secondary text */
-      --brand: #60a5fa;      /* accent */
-      --brand-2: #a78bfa;    /* accent 2 */
+      --bg: #0b1220;           /* background */
+      --surface: #0f172a;      /* cards */
+      --text: #e5e7eb;         /* primary text */
+      --muted: #94a3b8;        /* secondary text */
+      --brand: #60a5fa;        /* accent */
+      --brand-2: #a78bfa;      /* accent 2 */
       --ring: rgba(99,102,241,.35);
       --border: rgba(148,163,184,.18);
       --chip: rgba(148,163,184,.12);
       --shadow: 0 10px 35px rgba(2,6,23,.45);
+      --radius: 16px;
     }
     [data-theme="light"]{
       --bg:#ffffff; --surface:#f8fafc; --text:#0f172a; --muted:#475569; --brand:#2563eb; --brand-2:#7c3aed; --ring:rgba(37,99,235,.25); --border:#e2e8f0; --chip:#eef2ff; --shadow: 0 10px 20px rgba(15,23,42,.08);
@@ -24,7 +31,7 @@
 
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
-    body{margin:0;background:var(--bg);color:var(--text);font:15.5px/1.65 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial}
+    body{margin:0;background:var(--bg);color:var(--text);font:15.5px/1.65 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial}
     a{color:inherit}
 
     /* ===== Utilities ===== */
@@ -37,7 +44,12 @@
     .grid{display:grid;gap:18px}
     .cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
     .cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .lift{transition:transform .25s ease, box-shadow .25s ease}
+    .lift:hover{transform:translateY(-2px); box-shadow:0 16px 40px rgba(2,6,23,.35)}
     @media (max-width:900px){.cols-2,.cols-3{grid-template-columns:1fr}}
+
+    /* ===== Progress Bar ===== */
+    .progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--brand),var(--brand-2));z-index:60}
 
     /* ===== Glassy Navbar ===== */
     .nav{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,rgba(2,8,23,.75),rgba(2,8,23,.45));backdrop-filter: blur(10px);border-bottom:1px solid var(--border)}
@@ -47,6 +59,7 @@
     .menu{display:flex;gap:14px;flex-wrap:wrap}
     .menu a{color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:10px}
     .menu a:hover{background:var(--chip);color:var(--text)}
+    .menu a.active{background:linear-gradient(120deg,var(--brand),var(--brand-2)); color:#fff}
     .menu-toggle{display:none}
 
     /* ===== Hero ===== */
@@ -62,9 +75,11 @@
     @media (max-width:900px){.hero{grid-template-columns:1fr}.avatar{width:140px;height:140px}}
 
     /* ===== Sections & Cards ===== */
-    section{padding:36px 0;border-top:1px solid var(--border)}
-    .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow)}
+    section{padding:48px 0;border-top:1px solid var(--border)}
     h2{margin:0 0 16px 0;font-size:22px}
+    .section-title{display:flex;align-items:center;gap:10px}
+    .section-title .bar{height:10px;width:10px;border-radius:50%;background:linear-gradient(120deg,var(--brand),var(--brand-2))}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);border-image:linear-gradient(120deg,transparent 0,var(--border) 30%, var(--brand) 50%, var(--border) 70%, transparent 100%) 1}
 
     /* ===== Timeline ===== */
     .timeline{position:relative;padding-left:22px}
@@ -82,12 +97,25 @@
       .menu-toggle{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);background:var(--surface);border-radius:10px;padding:8px 10px;cursor:pointer;color:var(--text)}
     }
 
+    /* ===== Accessibility & Anchor offset ===== */
+    :target{scroll-margin-top:80px}
+
     /* ===== Tiny reveal animation ===== */
     .reveal{opacity:0; transform:translateY(10px); transition:all .5s ease}
     .reveal.show{opacity:1; transform:none}
+
+    /* ===== Print (export as PDF resume) ===== */
+    @media print{
+      nav, .progress, .menu-toggle, #themeToggle {display:none}
+      section{padding:18px 0}
+      .card{box-shadow:none}
+      body{background:#fff;color:#000}
+    }
   </style>
 </head>
 <body>
+  <div class="progress" id="progress"></div>
+
   <!-- NAVBAR -->
   <nav class="nav" aria-label="Main navigation">
     <div class="container nav-inner">
@@ -96,6 +124,7 @@
       <button class="menu-toggle" aria-expanded="false" aria-controls="menu">☰ Menu</button>
       <div id="menu" class="menu" role="navigation">
         <a href="#home">Home</a>
+        <a href="#about">About</a>
         <a href="#research">Research</a>
         <a href="#education">Education</a>
         <a href="#experience">Experience</a>
@@ -112,30 +141,63 @@
   <div class="hero-wrap" id="home">
     <div class="hero-bg" aria-hidden="true"></div>
     <div class="container hero">
-      <img class="avatar reveal" src="https://via.placeholder.com/220x220.png?text=Photo" alt="Profile photo" />
+      <img class="avatar reveal lift" src="https://via.placeholder.com/220x220.png?text=Photo" alt="Profile photo" />
       <div>
         <h1 class="title reveal">Md. <span class="grad">Shazzad Hossain Shaon</span></h1>
-        <p class="muted reveal">Ph.D. Student • Graduate Research Assistant — Security & AI Research Lab (S-AIR-L) • Department of Computer Science & Engineering, Oakland University (OU) • Rochester Hills, Michigan, USA</p>
+        <p class="muted reveal">Ph.D. Student • Graduate Research Assistant — Security & AI Research Lab (S-AIR-L) • Department of Computer Science & Engineering, Oakland University • Rochester Hills, Michigan, USA</p>
         <div class="chips reveal" style="margin-top:10px">
           <span class="pill">📍 Auburn Hills, MI</span>
-          <span class="pill">✉️ you@univ.edu</span>
-          <span class="pill">🔗 <a href="#" style="text-decoration:none;color:inherit">Google Scholar</a></span>
-          <span class="pill">🐙 <a href="#" style="text-decoration:none;color:inherit">GitHub</a></span>
+          <span class="pill">📧 shaon[AT]oakland[DOT]edu</span>
+          <span class="pill">🔗 <a href="https://scholar.google.com/citations?user=K7BOA2EAAAAJ&hl=en&oi=ao" style="text-decoration:none;color:inherit">Google Scholar</a></span>
+          <span class="pill">🐙 <a href="https://github.com/Shazzad-Shaon3404" style="text-decoration:none;color:inherit">GitHub</a></span>
+          <span class="pill">💼 <a href="https://www.linkedin.com/in/md-shazzad-hossain-shaon-a886391ba/" style="text-decoration:none;color:inherit">LinkedIn</a></span>
         </div>
         <div class="actions reveal">
-          <a class="btn primary" href="#" target="_blank" rel="noopener">Download CV</a>
+          <a class="btn primary" href="https://drive.google.com/file/d/193sVjc_7sB7RBJO8F1r4Np0W5W9K_bh-/view?usp=drive_link" target="_blank" rel="noopener">Download CV</a>
           <a class="btn ghost" href="#contact">Contact</a>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- INTRO -->
-  <section>
+  <!-- ABOUT -->
+  <section id="about">
     <div class="container">
-      <h2>About</h2>
-      <div class="card reveal">
-        <p class="muted" style="margin:0">Short paragraph (3–5 lines) about your research focus—e.g., vulnerability detection with ML/DL/LLM, neuro‑symbolic methods, program analysis (AST/CFG/PDG), and explainable tooling for developers. Mention current work, goals, and any highlights.</p>
+      <div class="section-title"><span class="bar"></span><h2>Bio</h2></div>
+      <div class="card reveal lift">
+        <p class="muted" style="margin:0">Md. Shazzad Hossain Shaon is a Ph.D. student in the Department 
+          of Computer Science and Engineering at Oakland University (OU), Michigan, USA. He earned his Bachelor of Science in 
+          Computer Science and Engineering from Daffodil International University, Bangladesh, where he graduated with 
+          distinction and built a strong foundation in software engineering, algorithms, and data-driven applications.
+          At Oakland University, Shaon’s research lies at the intersection of artificial intelligence, cybersecurity, 
+          and health informatics. His work focuses on designing AI-driven security frameworks and applying large 
+          language models (LLMs), machine learning (ML), and deep learning (DL) to develop innovative and secure 
+          solutions for data-driven healthcare applications. He is particularly interested in advancing AI-based 
+          vulnerability detection, natural language processing (NLP), and algorithmic approaches that enhance both 
+          data security and clinical decision-making. Shaon is also a recipient of funding from the National Aeronautics 
+          and Space Administration (NASA), through the Michigan Space Grant Consortium (MSGC). In this NASA-funded project, 
+          he explores AI-based methods for vulnerability detection and software security in aerospace systems. In addition 
+          to his doctoral research, Shaon has published papers in prestigious peer-reviewed journals and leading international 
+          conferences, showcasing his contributions to AI security, LLMs for code analysis, and healthcare informatics. 
+          He continues to collaborate with faculty and interdisciplinary 
+          teams on projects that integrate state-of-the-art AI methods with real-world healthcare and aerospace challenges.</div>
+    </div>
+  </section>
+
+
+
+    <!-- NEWS -->
+  <section id="about">
+    <div class="container">
+      <div class="section-title"><span class="bar"></span><h2>News</h2></div>
+      <div class="card reveal lift">
+        <p class="muted" style="margin:0">
+       <ul style="margin:0">
+            <li>Software Security • Vulnerability Detection (C/C++/Python)</li>
+            <li>Program Analysis (AST/CFG/PDG), Taint/Data‑flow</li>
+            <li>ML/DL/LLM for Code • Graph/Contrastive Learning</li>
+            <li>Neuro‑symbolic reasoning • Explainability</li>
+          </ul>
       </div>
     </div>
   </section>
@@ -143,9 +205,9 @@
   <!-- RESEARCH INTERESTS & SKILLS -->
   <section id="research">
     <div class="container">
-      <h2>Research Interests & Skills</h2>
+      <div class="section-title"><span class="bar"></span><h2>Research Interests & Skills</h2></div>
       <div class="grid cols-2">
-        <div class="card reveal">
+        <div class="card reveal lift">
           <ul style="margin:0">
             <li>Software Security • Vulnerability Detection (C/C++/Python)</li>
             <li>Program Analysis (AST/CFG/PDG), Taint/Data‑flow</li>
@@ -153,7 +215,7 @@
             <li>Neuro‑symbolic reasoning • Explainability</li>
           </ul>
         </div>
-        <div class="card reveal">
+        <div class="card reveal lift">
           <strong>Skills</strong>
           <ul class="muted" style="margin:8px 0 0 0">
             <li>Python, C/C++; PyTorch, TensorFlow, scikit‑learn</li>
@@ -169,8 +231,8 @@
   <!-- EDUCATION / EXPERIENCE (Timeline) -->
   <section id="education">
     <div class="container">
-      <h2>Education</h2>
-      <div class="card timeline reveal">
+      <div class="section-title"><span class="bar"></span><h2>Education</h2></div>
+      <div class="card timeline reveal lift">
         <div class="t-item"><strong>Ph.D., Computer Science</strong> — Oakland University (2024– )</div>
         <div class="t-item"><strong>B.Sc., Computer Science</strong> — Your University (Year)</div>
       </div>
@@ -179,8 +241,8 @@
 
   <section id="experience">
     <div class="container">
-      <h2>Experience</h2>
-      <div class="card timeline reveal">
+      <div class="section-title"><span class="bar"></span><h2>Experience</h2></div>
+      <div class="card timeline reveal lift">
         <div class="t-item"><strong>Graduate Research Assistant</strong> — Lab/Dept (2024– )</div>
         <div class="t-item"><strong>Teaching Assistant</strong> — Course/Dept (2024– )</div>
       </div>
@@ -190,8 +252,8 @@
   <!-- PUBLICATIONS -->
   <section id="publications">
     <div class="container">
-      <h2>Selected Publications</h2>
-      <div class="card reveal">
+      <div class="section-title"><span class="bar"></span><h2>Selected Publications</h2></div>
+      <div class="card reveal lift">
         <ol class="muted" style="margin:0">
           <li>Author, <em>Title</em>, Venue, Year. <a href="#">PDF</a></li>
           <li>Author, <em>Title</em>, Venue, Year. <a href="#">PDF</a></li>
@@ -203,11 +265,11 @@
   <!-- PROJECTS -->
   <section id="projects">
     <div class="container">
-      <h2>Projects</h2>
+      <div class="section-title"><span class="bar"></span><h2>Projects</h2></div>
       <div class="grid cols-3">
-        <div class="card reveal"><strong>Project A</strong><br><span class="muted">One‑line description with outcome or link.</span></div>
-        <div class="card reveal"><strong>Project B</strong><br><span class="muted">One‑line description with outcome or link.</span></div>
-        <div class="card reveal"><strong>Project C</strong><br><span class="muted">One‑line description with outcome or link.</span></div>
+        <div class="card reveal lift"><strong>Project A</strong><br><span class="muted">One‑line description with outcome or link.</span></div>
+        <div class="card reveal lift"><strong>Project B</strong><br><span class="muted">One‑line description with outcome or link.</span></div>
+        <div class="card reveal lift"><strong>Project C</strong><br><span class="muted">One‑line description with outcome or link.</span></div>
       </div>
     </div>
   </section>
@@ -215,8 +277,8 @@
   <!-- AWARDS -->
   <section id="awards">
     <div class="container">
-      <h2>Awards</h2>
-      <div class="card reveal">
+      <div class="section-title"><span class="bar"></span><h2>Awards</h2></div>
+      <div class="card reveal lift">
         <ul class="muted" style="margin:0">
           <li>Award Name — Org (Year)</li>
           <li>Scholarship — Org (Year)</li>
@@ -228,8 +290,8 @@
   <!-- CONTACT -->
   <section id="contact">
     <div class="container">
-      <h2>Contact</h2>
-      <div class="card reveal">
+      <div class="section-title"><span class="bar"></span><h2>Contact</h2></div>
+      <div class="card reveal lift">
         <p class="muted" style="margin:0">Email: <a href="mailto:you@univ.edu">you@univ.edu</a> • LinkedIn • GitHub • Google Scholar</p>
       </div>
     </div>
@@ -242,6 +304,7 @@
   <script>
     // Year
     document.getElementById('year').textContent = new Date().getFullYear();
+
     // Mobile menu toggle
     const toggle = document.querySelector('.menu-toggle');
     const menu = document.getElementById('menu');
@@ -249,6 +312,7 @@
       const open = menu.classList.toggle('open');
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
+
     // Theme toggle (light/dark)
     const btn = document.getElementById('themeToggle');
     const key = 'theme';
@@ -269,7 +333,41 @@
       entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target); } });
     }, {threshold: 0.08});
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // Scroll progress bar
+    const prog = document.getElementById('progress');
+    const onScroll = () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+      prog.style.width = (scrolled * 100) + '%';
+    };
+    document.addEventListener('scroll', onScroll, {passive:true});
+
+    // Active section highlight
+    const links = Array.from(document.querySelectorAll('.menu a[href^="#"]'));
+    const sections = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+    const obs = new IntersectionObserver((ents)=>{
+      ents.forEach(ent => {
+        if(ent.isIntersecting){
+          const id = '#' + ent.target.id;
+          links.forEach(a => a.classList.toggle('active', a.getAttribute('href')===id));
+        }
+      })
+    }, {rootMargin: '-50% 0px -45% 0px', threshold: [0,1]});
+    sections.forEach(sec => obs.observe(sec));
+  </script>
+
+  <!-- Structured data (optional) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Your Name",
+    "jobTitle": "Ph.D. Student",
+    "affiliation": {"@type":"Organization","name":"Your University"},
+    "url": "https://yourusername.github.io/",
+    "sameAs": ["https://github.com/yourusername","https://scholar.google.com/citations?user=xxxxx"]
+  }
   </script>
 </body>
 </html>
-
